@@ -1,0 +1,86 @@
+package STudentDevelopmentScratch.SMS.Service.MarksService;
+
+import STudentDevelopmentScratch.SMS.DTOs.MarksDTOS;
+import STudentDevelopmentScratch.SMS.Entity.CourseEntity;
+import STudentDevelopmentScratch.SMS.Entity.MarksEntity;
+import STudentDevelopmentScratch.SMS.Entity.StudentEntity;
+import STudentDevelopmentScratch.SMS.Repositry.CourseRepo;
+import STudentDevelopmentScratch.SMS.Repositry.MarksRepo;
+import STudentDevelopmentScratch.SMS.Repositry.StudentRepo;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@RequiredArgsConstructor
+public class MarkService implements MarksImpl {
+
+    private final MarksRepo marksRepo;
+    private final ModelMapper modelMapper;
+    private final StudentRepo studentRepo;
+    private final CourseRepo courseRepo;
+
+    // ✅ POST MARKS WITH AUTO-GRADE
+    @Transactional
+    public MarksDTOS postmarks(String studentRollNumber, MarksDTOS marksDTOS) {
+
+        StudentEntity student = studentRepo.findByStudentRollNumber(studentRollNumber)
+                .orElseThrow(() ->
+                        new RuntimeException("Student not found with roll number " + studentRollNumber));
+
+        CourseEntity course = courseRepo.findBycourseCode(marksDTOS.getCourseCode())
+                .orElseThrow(() ->
+                        new RuntimeException("Course not found " + marksDTOS.getCourseCode()));
+
+        MarksEntity marksEntity = new MarksEntity();
+        marksEntity.setInternalmarks(marksDTOS.getInternalmarks());
+        marksEntity.setExternalmarks(marksDTOS.getExternalmarks());
+
+        // 🔥 AUTO GRADE (SERVER SIDE)
+        marksEntity.setDecisiongrade(
+                calculateGrade(
+                        marksDTOS.getInternalmarks(),
+                        marksDTOS.getExternalmarks()
+                )
+        );
+
+        marksEntity.setStudent(student);
+        marksEntity.setCourse(course);
+
+        MarksEntity saved = marksRepo.save(marksEntity);
+        return modelMapper.map(saved, MarksDTOS.class);
+    }
+
+    // ✅ GET MARKS BY STUDENT + COURSE
+    public MarksDTOS getStudentMarksByID(String studentRollNumber, String courseCode) {
+
+        studentRepo.findByStudentRollNumber(studentRollNumber)
+                .orElseThrow(() ->
+                        new RuntimeException("Student not found " + studentRollNumber));
+
+        courseRepo.findBycourseCode(courseCode)
+                .orElseThrow(() ->
+                        new RuntimeException("Course not found " + courseCode));
+
+        MarksEntity marksEntity =
+                marksRepo.findByStudent_StudentRollNumberAndCourse_CourseCode(
+                                studentRollNumber, courseCode)
+                        .orElseThrow(() ->
+                                new RuntimeException("Marks not found for given student and course"));
+
+        return modelMapper.map(marksEntity, MarksDTOS.class);
+    }
+
+    // ✅ GRADE CALCULATION LOGIC
+    private String calculateGrade(Integer internal, Integer external) {
+        int total = internal + external;
+
+        if (total >= 90) return "A+";
+        else if (total >= 80) return "A";
+        else if (total >= 70) return "B";
+        else if (total >= 60) return "C";
+        else if (total >= 50) return "D";
+        else return "F";
+    }
+}
