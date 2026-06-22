@@ -1,4 +1,5 @@
 package STudentDevelopmentScratch.SMS.DTOs;
+import STudentDevelopmentScratch.SMS.Enum.Roles;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,8 @@ public class StudentDTOSS{
     private String stu_pass;
 
     private String courseCode;
+
+    private Roles roles;
 
 }
 

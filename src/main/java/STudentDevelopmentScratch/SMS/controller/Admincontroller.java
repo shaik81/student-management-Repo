@@ -1,41 +1,43 @@
-package STudentDevelopmentScratch.SMS.Controller;
+package STudentDevelopmentScratch.SMS.controller;
+
+
 
 import STudentDevelopmentScratch.SMS.DTOs.AdminDtos;
-import STudentDevelopmentScratch.SMS.Service.AdminServices.AdminService;
-import lombok.NoArgsConstructor;
+import STudentDevelopmentScratch.SMS.Service.AdminService.Adminserviceimpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
 @RestController
 @RequiredArgsConstructor
+public class Admincontroller {
 
-public class AdminController {
-
-    private final AdminService adminService;
+    private final Adminserviceimpl adminserviceimpl;
 
 
-    @GetMapping("/admin")
+    @GetMapping("/alladmins")
     public ResponseEntity<List<AdminDtos>>getDeatilsofAdmins() {
-        List<AdminDtos> adminDtos = adminService.getDeatilsofAdmins();
+        List<AdminDtos> adminDtos = adminserviceimpl.getDeatilsofAdmins();
 
         return ResponseEntity.status(HttpStatus.OK).body(adminDtos);
     }
 
     @PostMapping("/admin/postdata")
     public ResponseEntity<AdminDtos>postData(@RequestBody AdminDtos adminDtos){
-        AdminDtos Dtos = adminService.postData(adminDtos);
+        AdminDtos Dtos = adminserviceimpl.postData(adminDtos);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(Dtos);
     }
     @GetMapping("{adminEmail}/admin")
     public ResponseEntity<AdminDtos>getbyID(@PathVariable String adminEmail){
-        AdminDtos dtos = adminService.getbyID(adminEmail);
+        AdminDtos dtos = adminserviceimpl.getbyID(adminEmail);
 
         return ResponseEntity.status(HttpStatus.OK).body(dtos);
     }
+
+
 }

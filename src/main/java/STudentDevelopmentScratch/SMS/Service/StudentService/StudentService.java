@@ -5,6 +5,7 @@ import STudentDevelopmentScratch.SMS.DTOs.SearchStudent;
 import STudentDevelopmentScratch.SMS.DTOs.StudentDTOSS;
 import STudentDevelopmentScratch.SMS.Entity.CourseEntity;
 import STudentDevelopmentScratch.SMS.Entity.StudentEntity;
+import STudentDevelopmentScratch.SMS.Enum.Roles;
 import STudentDevelopmentScratch.SMS.Repositry.CourseRepo;
 import STudentDevelopmentScratch.SMS.Repositry.StudentRepo;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,7 @@ public class StudentService implements MethodsOFService {
             throw new RuntimeException("Course code is required");
         }
 
+
         // Fetch course entity
         CourseEntity courseEntity = courseRepo.findBycourseCode(studentDTOSS.getCourseCode())
                 .orElseThrow(() -> new RuntimeException("Course not found: " + studentDTOSS.getCourseCode()));
@@ -43,16 +45,23 @@ public class StudentService implements MethodsOFService {
         // Map DTO → Entity
         StudentEntity entity = modelMapper.map(studentDTOSS, StudentEntity.class);
 
+        entity.setRoles(Roles.Student);
+
         // Encode password
         entity.setStu_pass(passwordEncoder.encode(studentDTOSS.getStu_pass()));
 
         // Set course
         entity.setCourseEntity(courseEntity);
 
-        // Save entity
-        studentRepo.save(entity);
+        StudentEntity savedEntity = studentRepo.save(entity);
 
-        return studentDTOSS;
+        StudentDTOSS dtoss = modelMapper.map(savedEntity,StudentDTOSS.class);
+
+        dtoss.setStu_pass(null);
+
+
+        return dtoss;
+
     }
 
 
@@ -118,10 +127,14 @@ public class StudentService implements MethodsOFService {
         if (studentDTOSS.getStu_pass() != null && !studentDTOSS.getStu_pass().isBlank()) {
             entity.setStu_pass(passwordEncoder.encode(studentDTOSS.getStu_pass()));
         }
-
+        if (studentDTOSS.getRoles()!=null){
+            entity.setRoles(studentDTOSS.getRoles());
+        }
         StudentEntity updated = studentRepo.save(entity);
         StudentDTOSS dto = modelMapper.map(updated, StudentDTOSS.class);
         dto.setStu_pass(null);
+
+
         return dto;
     }
 
@@ -138,6 +151,7 @@ public class StudentService implements MethodsOFService {
         entity.setStuAddress(studentDTOSS.getStuAddress());
         entity.setStuDept(studentDTOSS.getStuDept());
         entity.setStu_pass(passwordEncoder.encode(studentDTOSS.getStu_pass()));
+
 
         StudentEntity savedEntity = studentRepo.save(entity);
         StudentDTOSS dto = modelMapper.map(savedEntity, StudentDTOSS.class);

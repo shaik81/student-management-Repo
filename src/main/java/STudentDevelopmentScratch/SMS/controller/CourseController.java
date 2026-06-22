@@ -1,15 +1,11 @@
-package STudentDevelopmentScratch.SMS.Controller;
+package STudentDevelopmentScratch.SMS.controller;
 
 import STudentDevelopmentScratch.SMS.DTOs.CourseDTOS;
 import STudentDevelopmentScratch.SMS.DTOs.SearchCourse;
-import STudentDevelopmentScratch.SMS.DTOs.SearchStudent;
-import STudentDevelopmentScratch.SMS.DTOs.StudentDTOSS;
 import STudentDevelopmentScratch.SMS.Service.CourseService.CourseService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.context.LifecycleAutoConfiguration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

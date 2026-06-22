@@ -1,5 +1,7 @@
 package STudentDevelopmentScratch.SMS.DTOs;
 
+
+import STudentDevelopmentScratch.SMS.Enum.Roles;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -7,9 +9,7 @@ import lombok.RequiredArgsConstructor;
 @Data
 @AllArgsConstructor
 @RequiredArgsConstructor
-
 public class AdminDtos {
-
 
     private String adminName;
 
@@ -23,5 +23,5 @@ public class AdminDtos {
 
     private String adminPass;
 
-
+    private Roles roles;
 }

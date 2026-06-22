@@ -1,25 +1,24 @@
-package STudentDevelopmentScratch.SMS.Service.AdminServices;
-
+package STudentDevelopmentScratch.SMS.Service.AdminService;
+import STudentDevelopmentScratch.SMS.Enum.Roles;
+import org.springframework.stereotype.Service;
 import STudentDevelopmentScratch.SMS.DTOs.AdminDtos;
-import STudentDevelopmentScratch.SMS.DTOs.HideAdminPassDTOS;
 import STudentDevelopmentScratch.SMS.Entity.AdminEntity;
 import STudentDevelopmentScratch.SMS.Repositry.AdminRepo;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
 
-public class AdminService implements AdminserviceImpl{
+public class Adminserviceimpl implements Adminservices {
 
     private final AdminRepo adminRepo;
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
+
 
     public List<AdminDtos>getDeatilsofAdmins() {
         List<AdminEntity> adminEntity = adminRepo.findAll();
@@ -33,16 +32,17 @@ public class AdminService implements AdminserviceImpl{
                     return dtos;
                 }).toList();
 
-    }
 
+
+    }
+        @Override
     public AdminDtos postData(AdminDtos adminDtos){
 
         AdminEntity entity = modelMapper.map(adminDtos,AdminEntity.class);
 
         entity.setAdminPass(passwordEncoder.encode(adminDtos.getAdminPass()));
-
+        entity.setRoles(Roles.Admin);
         AdminEntity savedEntity = adminRepo.save(entity);
-
         return modelMapper.map(savedEntity,AdminDtos.class);
 
     }
@@ -52,12 +52,13 @@ public class AdminService implements AdminserviceImpl{
 
         AdminEntity  entity = adminRepo.findByAdminEmail(adminEmail).orElseThrow(()->
                 new RuntimeException("Enter a Valid Email " ));
+        AdminDtos dtos = modelMapper.map(entity,AdminDtos.class);
+        dtos.setAdminPass(null);
+        return dtos;
 
-            AdminDtos dtos = modelMapper.map(entity,AdminDtos.class);
-            dtos.setAdminPass(null);
-            return dtos;
 
 
     }
+
 
 }

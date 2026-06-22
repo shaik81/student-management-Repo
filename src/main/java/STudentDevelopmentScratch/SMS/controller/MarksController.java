@@ -1,4 +1,4 @@
-package STudentDevelopmentScratch.SMS.Controller;
+package STudentDevelopmentScratch.SMS.controller;
 
 import STudentDevelopmentScratch.SMS.DTOs.MarksDTOS;
 import STudentDevelopmentScratch.SMS.Service.MarksService.MarkService;
@@ -6,8 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @CrossOrigin(

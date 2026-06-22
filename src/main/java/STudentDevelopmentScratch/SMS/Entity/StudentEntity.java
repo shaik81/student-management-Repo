@@ -1,5 +1,8 @@
 package STudentDevelopmentScratch.SMS.Entity;
 
+
+import STudentDevelopmentScratch.SMS.Enum.Roles;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -59,4 +62,10 @@ public class StudentEntity {
 
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MarksEntity> marksEntities;
+
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Roles roles;
+
 }
