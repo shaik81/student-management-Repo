@@ -28,10 +28,11 @@ public class MarkService implements MarksImpl {
         StudentEntity student = studentRepo.findByStudentRollNumber(studentRollNumber)
                 .orElseThrow(() ->
                         new RuntimeException("Student not found with roll number " + studentRollNumber));
+        String assignedCoursecode = student.getCourseEntity().getCourseCode();
 
-        CourseEntity course = courseRepo.findBycourseCode(marksDTOS.getCourseCode())
+        CourseEntity course = courseRepo.findBycourseCode(assignedCoursecode)
                 .orElseThrow(() ->
-                        new RuntimeException("Course not found " + marksDTOS.getCourseCode()));
+                        new RuntimeException("Course not found " +assignedCoursecode));
 
         MarksEntity marksEntity = new MarksEntity();
         marksEntity.setInternalmarks(marksDTOS.getInternalmarks());
@@ -47,6 +48,17 @@ public class MarkService implements MarksImpl {
 
         marksEntity.setStudent(student);
         marksEntity.setCourse(course);
+        marksEntity.setStudentRollNumber(student.getStudentRollNumber());
+
+        System.out.println("Student = " + student);
+        System.out.println("Student ID = " + student.getID());
+        System.out.println("Roll Number = " + student.getStudentRollNumber());
+
+        System.out.println("Course = " + course);
+        System.out.println("Course Code = " + course.getCourseCode());
+
+        System.out.println("Marks Student = " + marksEntity.getStudent());
+        System.out.println("Marks Student ID = " + marksEntity.getStudent().getID());
 
         MarksEntity saved = marksRepo.save(marksEntity);
         return modelMapper.map(saved, MarksDTOS.class);

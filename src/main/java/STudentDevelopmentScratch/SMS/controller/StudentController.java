@@ -5,6 +5,7 @@
             import STudentDevelopmentScratch.SMS.DTOs.StudentDTOSS;
 
             import STudentDevelopmentScratch.SMS.Service.StudentService.StudentService;
+            import jakarta.annotation.security.PermitAll;
             import jakarta.validation.Valid;
             import lombok.RequiredArgsConstructor;
             import org.springframework.http.ResponseEntity;
@@ -14,20 +15,9 @@
             import java.util.List;
 
             @RestController
-            @CrossOrigin(
-                    origins = "http://127.0.0.1:5500",
-                    allowedHeaders = "*",
-                    methods = {
-                            RequestMethod.GET,
-                            RequestMethod.POST,
-                            RequestMethod.PUT,
-                            RequestMethod.DELETE,
-                            RequestMethod.OPTIONS
-                    }
-            )
 
             @RequiredArgsConstructor
-            @RequestMapping("/Students")
+            @RequestMapping("/students")
 
             public class StudentController {
 
@@ -35,13 +25,12 @@
 
                 @PostMapping("/postdata")
                 @PreAuthorize("hasRole('Admin')")
-                public ResponseEntity<StudentDTOSS> CreateStudent(@RequestBody StudentDTOSS studentDTOSS) {
-                    StudentDTOSS savedStudent = studentService.CreateStudent(studentDTOSS);
+                public ResponseEntity <List<StudentDTOSS>> CreateStudent(@RequestBody List <StudentDTOSS>studentDTOSS) {
+                   List <StudentDTOSS >  savedStudent = studentService.CreateStudent(studentDTOSS);
                     return ResponseEntity.ok(savedStudent);
                 }
 
-
-                @GetMapping
+                @GetMapping("/Allstudents")
                 @PreAuthorize("hasRole('Admin')")
                 public ResponseEntity<List<StudentDTOSS>> getALLStudents() {
                     List<StudentDTOSS> savedStudents = studentService.getALLStudents();
@@ -62,15 +51,15 @@
                     return ResponseEntity.ok(studentDTOSS);
                 }
                 @PatchMapping("/{studentRollNumber}/patchmapping")
-                @PreAuthorize("hasRole('ADMIN')")
+                @PreAuthorize("hasRole('Admin')")
                 public ResponseEntity<StudentDTOSS>updateStudent(@RequestBody StudentDTOSS studentDTOSS,@PathVariable String
                                                                  studentRollNumber){
                     StudentDTOSS Dtoss = studentService.updateStudent(studentRollNumber,studentDTOSS);
                     return ResponseEntity.ok(Dtoss);
                 }
 
-                @PutMapping("/{studentRollNumber}/putupdateStudent")
-                @PreAuthorize("hasRole('ADMIN')")
+                @PutMapping("/{studentRollNumber}/put")
+                @PreAuthorize("hasRole('Admin')")
                 public ResponseEntity<StudentDTOSS>putUpdate(@PathVariable String studentRollNumber,@RequestBody @Valid StudentDTOSS
                                                               studentDTOSS){
                     StudentDTOSS putUpdate = studentService.putUpdate(studentRollNumber,studentDTOSS);
@@ -90,7 +79,7 @@
 //                }
 
                 @GetMapping("/search")
-                @PreAuthorize("hasRole('ADMIN'),('Student')")
+                @PermitAll
                 public ResponseEntity<List<SearchStudent>> searchByid (@RequestParam String keyword){
                     List<SearchStudent> searchStudents = studentService.searchByStudentreference(keyword);
 

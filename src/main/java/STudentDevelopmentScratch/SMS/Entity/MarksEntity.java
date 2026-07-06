@@ -2,12 +2,12 @@
 
         import jakarta.persistence.*;
         import jakarta.validation.constraints.NotNull;
-        import lombok.AllArgsConstructor;
-        import lombok.Data;
-        import lombok.NoArgsConstructor;
+        import lombok.*;
+        import org.aspectj.bridge.IMessage;
 
         @Entity
-        @Data
+        @Getter
+        @Setter
         @NoArgsConstructor
         @AllArgsConstructor
         public class MarksEntity {
@@ -25,11 +25,15 @@
             private String decisiongrade;
 
             @ManyToOne
-            @JoinColumn(name = "student_id", nullable = false)
+            @JoinColumn(name = "student_id",referencedColumnName = "ID", nullable = false)
             private StudentEntity student;
 
             // 🔑 Many marks belong to one course
             @ManyToOne
-            @JoinColumn(name = "course_id", nullable = false)
+            @JoinColumn(name = "courseCode", nullable = false)
             private CourseEntity course;
+
+            @Column(unique = true, nullable = false)
+            @NotNull(message = "StudentRollNumber is Required")
+            private String studentRollNumber;
         }

@@ -30,39 +30,43 @@ public class StudentService implements MethodsOFService {
 
     @Override
     @Transactional
-    public StudentDTOSS CreateStudent(StudentDTOSS studentDTOSS) {
+    public List< StudentDTOSS>CreateStudent(List<StudentDTOSS> studentDTOSS) {
 
-        // Validate course code
-        if (studentDTOSS.getCourseCode() == null || studentDTOSS.getCourseCode().isBlank()) {
-            throw new RuntimeException("Course code is required");
-        }
+        List<StudentEntity> studentEntities = studentDTOSS.stream()
+                .map(dtoss -> {
+                    if (dtoss.getCourseCode() == null || dtoss.getCourseCode().isBlank()) {
+                        throw new RuntimeException("Course code is required");
+                    }
+                    CourseEntity courseEntity = courseRepo.findBycourseCode(dtoss.getCourseCode())
+                            .orElseThrow(() -> new RuntimeException("Course code not found"));
 
+                    StudentEntity studentEntity = modelMapper.map(dtoss, StudentEntity.class);
 
-        // Fetch course entity
-        CourseEntity courseEntity = courseRepo.findBycourseCode(studentDTOSS.getCourseCode())
-                .orElseThrow(() -> new RuntimeException("Course not found: " + studentDTOSS.getCourseCode()));
+                    studentEntity.setRoles(Roles.Student);
 
-        // Map DTO → Entity
-        StudentEntity entity = modelMapper.map(studentDTOSS, StudentEntity.class);
+                    studentEntity.setStu_pass(passwordEncoder.encode(studentEntity.getStu_pass()));
 
-        entity.setRoles(Roles.Student);
+                    studentEntity.setCourseEntity(courseEntity);
 
-        // Encode password
-        entity.setStu_pass(passwordEncoder.encode(studentDTOSS.getStu_pass()));
-
-        // Set course
-        entity.setCourseEntity(courseEntity);
-
-        StudentEntity savedEntity = studentRepo.save(entity);
-
-        StudentDTOSS dtoss = modelMapper.map(savedEntity,StudentDTOSS.class);
-
-        dtoss.setStu_pass(null);
+                    return studentEntity;
 
 
-        return dtoss;
+                })
+                .toList();
 
+        List<StudentEntity> entityList = studentRepo.saveAll(studentEntities);
+
+        List<StudentEntity>entities = studentRepo.saveAll(entityList);
+
+        return entityList.stream()
+                .map(studentEntity ->{
+                    StudentDTOSS dtoss  = modelMapper.map(studentEntity,StudentDTOSS.class);
+                    dtoss.setStu_pass(null);
+                    return dtoss;
+                })
+                .toList();
     }
+
 
 
     @Override

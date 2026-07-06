@@ -10,7 +10,8 @@
     import lombok.*;
 
     @Entity
-    @Data
+    @Getter
+    @Setter
     @AllArgsConstructor
     @NoArgsConstructor
     @Table(name = "ADMIN")

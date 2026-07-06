@@ -7,9 +7,7 @@ import STudentDevelopmentScratch.SMS.DTOs.StudentDTOSS;
 import java.util.List;
 
 public interface MethodsOFService {
-
-    // Single DTO
-    StudentDTOSS CreateStudent(StudentDTOSS studentDTOSS);
+    List<StudentDTOSS> CreateStudent(List <StudentDTOSS> studentDTOSS);
 
     List<StudentDTOSS> getALLStudents();
 
