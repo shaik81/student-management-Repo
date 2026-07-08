@@ -7,7 +7,7 @@
     import org.springframework.http.ResponseEntity;
     import org.springframework.security.access.prepost.PreAuthorize;
     import org.springframework.web.bind.annotation.*;
-    import org.yaml.snakeyaml.error.Mark;
+
 
     @RestController
     @RequestMapping("/Marks")
@@ -40,10 +40,14 @@
             MarksDTOS savedDTo = markService.getStudentMarksByID(studentRollNumber, courseCode);
             return ResponseEntity.status(HttpStatus.OK).body(savedDTo);
         }
-        @PutMapping
-        public ResponseEntity<MarksDTOS>updateMarks(@PathVariable String ){
+        @PreAuthorize("hasRole('Admin')")
+        @PutMapping("/updateMarks")
+        public ResponseEntity<MarksDTOS>updateMarks(@PathVariable String studentRollNumber ,
+                                                    @PathVariable String Coursecode,@RequestBody MarksDTOS marksDTOS){
 
-            MarksDTOS updatedto = markService.updateMarks
+            MarksDTOS updto = markService.updateMarks(studentRollNumber, Coursecode, marksDTOS);
+
+            return ResponseEntity.status(HttpStatus.OK).body(updto);
 
         }
     }

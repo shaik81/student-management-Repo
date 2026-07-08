@@ -95,4 +95,31 @@ public class MarkService implements MarksImpl {
         else if (total >= 50) return "D";
         else return "F";
     }
+
+    public MarksDTOS updateMarks(String studentRollNumber,String Coursecode,MarksDTOS marksDTOS) {
+
+
+        StudentEntity entity = studentRepo.findByStudentRollNumber(studentRollNumber).orElseThrow(
+                ()->new RuntimeException("Student not found with roll number " + studentRollNumber)
+        );
+
+        CourseEntity courseEntity = courseRepo.findBycourseCode(marksDTOS.getCourseCode()).orElseThrow(
+                ()->new RuntimeException("Course not found " + marksDTOS.getCourseCode())
+        );
+        MarksEntity marksEntity = marksRepo.findByStudent_StudentRollNumberAndCourse_CourseCode(studentRollNumber,
+                Coursecode).orElseThrow(()->
+                new RuntimeException("Marks are not specified for the student and course"));
+        if (marksDTOS.getInternalmarks() != null) {
+                marksEntity.setInternalmarks(marksDTOS.getInternalmarks());
+
+        }
+        if (marksDTOS.getExternalmarks() != null) {
+            marksEntity.setExternalmarks(marksDTOS.getExternalmarks());
+
+        }
+        calculateGrade(marksEntity.getInternalmarks(), marksEntity.getExternalmarks());
+        marksRepo.save(marksEntity);
+        return modelMapper.map(marksEntity, MarksDTOS.class);
+
+    }
 }
